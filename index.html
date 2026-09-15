@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Carnet d'évaluation — Arts plastiques</title>
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#111827}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 15px}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:2px}
+main{max-width:780px;margin:auto;padding:12px 12px 90px}nav{display:flex;gap:7px;overflow:auto;padding:2px 0 10px}
+button{font:inherit;border:0;border-radius:11px;padding:10px 13px;background:#e5e7eb;color:var(--text);font-weight:650;cursor:pointer}
+button.primary,.active{background:var(--accent);color:#fff}button.danger{background:#fee2e2;color:#991b1b}button.small{padding:7px 9px;font-size:13px}
+.mic{min-width:48px;font-size:20px;padding:8px 10px}.mic.listening{background:#991b1b;color:#fff}
+.voice-status{font-size:12px;color:var(--muted);margin-top:5px;min-height:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;margin:9px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+input,select,textarea{font:inherit;width:100%;padding:11px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
+textarea{min-height:65px;resize:vertical}.grid2{display:grid;grid-template-columns:1fr 120px;gap:9px}.grid3{display:grid;grid-template-columns:1fr 100px auto;gap:8px;align-items:end}
+.row{display:flex;gap:8px;align-items:center}.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.notice{background:#f9fafb;border:1px dashed #d1d5db;border-radius:11px;padding:10px;color:#4b5563;font-size:13px}
+.criterion{border:1px solid var(--line);border-radius:13px;padding:12px;margin:8px 0}.criterion-title{font-weight:750}.criterion-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.scoreline{display:flex;align-items:center;gap:10px;margin-top:10px}.score{font-size:28px;font-weight:800;min-width:62px}.scoremax{color:var(--muted);font-size:13px}
+input[type=range]{display:block;width:100%;height:34px;padding:0;border:0;background:transparent;accent-color:#111827;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:8px;background:#d1d5db}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-9px;border-radius:50%;background:#111827;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-track{height:10px;border-radius:8px;background:#d1d5db}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#111827;border:3px solid #fff}
+.quick{display:flex;gap:5px;overflow:auto;margin-top:5px}.quick button{flex:0 0 auto;padding:7px 8px;font-size:12px}
+.student{display:flex;align-items:center;justify-content:space-between;gap:10px}.student-name{font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.stat{padding:11px;border:1px solid var(--line);border-radius:11px}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}th{font-size:11px;color:var(--muted)}
+.hidden{display:none!important}footer{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:8px 11px calc(8px + env(safe-area-inset-bottom));z-index:6}
+.footer-inner{max-width:780px;margin:auto;display:flex;gap:7px}.footer-inner button{flex:1}
+.eval-card{cursor:pointer}.eval-card:hover{background:#fafafa}
+@media(min-width:620px){.stats{grid-template-columns:repeat(4,1fr)}}
+
+/* V2 mobile grading enhancements */
+.progressbar{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:8px}.progressfill{height:100%;background:#111827;width:0}
+.studentnav{display:grid;grid-template-columns:48px 1fr 48px;gap:7px;align-items:center}.studentnav button{height:48px;padding:0;font-size:20px}.studentnav select{min-width:0;height:48px;font-size:16px}
+.biggrade{font-size:34px;font-weight:850;letter-spacing:-1px}.criterion .scoreline{justify-content:space-between}
+.criterion input[type=range]{height:44px}.criterion input[type=range]::-webkit-slider-runnable-track{height:12px}.criterion input[type=range]::-webkit-slider-thumb{width:32px;height:32px;margin-top:-10px}
+.evalactions{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:7px;margin-top:10px}.evalactions button{min-height:48px}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:750;background:#f3f4f6;color:#4b5563}.badge.done{background:#dcfce7;color:#166534}
+.dist{display:flex;align-items:end;gap:5px;height:120px;border-bottom:1px solid var(--line);padding:8px 2px 0}.barwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;min-width:18px}.bar{width:100%;max-width:34px;background:#9ca3af;border-radius:5px 5px 0 0;min-height:2px}.barlabel{font-size:10px;color:var(--muted);margin-top:4px}.barcount{font-size:10px;margin-bottom:2px}
+@media(max-width:380px){.evalactions button{font-size:12px;padding:8px 5px}.quick{display:none}}
+
+/* Fiches individuelles */
+#individualPrintArea{display:none}
+@media print{
+  body.printing-individuals > *{display:none!important}
+  body.printing-individuals #individualPrintArea{display:block!important}
+  .individual-sheet{
+    width:100%;min-height:260mm;padding:16mm 14mm;page-break-after:always;
+    background:#fff;color:#111827;
+  }
+  .individual-sheet:last-child{page-break-after:auto}
+  .individual-title{font-size:24px;font-weight:800;margin-bottom:4px}
+  .individual-subtitle{font-size:14px;color:#6b7280;margin-bottom:18px}
+  .individual-note{
+    border:2px solid #111827;border-radius:14px;padding:14px;margin:16px 0;
+    display:flex;justify-content:space-between;align-items:center;gap:15px;
+  }
+  .individual-note-label{font-weight:750}
+  .individual-note-value{font-size:34px;font-weight:850}
+  .individual-table{width:100%;border-collapse:collapse;margin-top:14px}
+  .individual-table th,.individual-table td{border:1px solid #d1d5db;padding:10px;vertical-align:top}
+  .individual-table th{background:#f3f4f6;font-size:12px}
+  .individual-table td:last-child,.individual-table th:last-child{text-align:center;white-space:nowrap}
+  .individual-appreciation{margin-top:22px;border:1px solid #d1d5db;border-radius:12px;padding:12px;min-height:42mm}
+  .individual-footer{margin-top:18px;font-size:11px;color:#6b7280}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="header-row">
+ <div><h1>Carnet d'évaluation</h1><div class="sub" id="headerSub">Arts plastiques</div></div>
+ <button class="small" onclick="showTab('settings')">Paramétrer</button>
+</div>
+</header>
+
+<main>
+<nav>
+ <button id="tabEval" class="active" onclick="showTab('eval')">Évaluer</button>
+ <button id="tabStudents" onclick="showTab('students')">Élèves</button>
+ <button id="tabSynth" onclick="showTab('synth')">Synthèse</button>
+ <button id="tabSettings" onclick="showTab('settings')">Évaluation</button>
+</nav>
+
+<section id="eval">
+ <div class="card">
+  <label>Évaluation</label>
+  <select id="evalSelect" onchange="changeEvaluation()"></select>
+ </div>
+ <div class="card">
+  <label>Élève</label>
+  <div class="row">
+   <select id="studentSelect" onchange="changeStudent()"></select>
+   <button id="micEval" class="mic" title="Choisir l’élève à la voix" onclick="startVoiceEval()">🎙️</button>
+  </div>
+  <div id="voiceEvalStatus" class="voice-status"></div>
+  <div class="row" style="margin-top:8px">
+   <input id="quickStudent" type="text" placeholder="Ajouter un élève…" onkeydown="if(event.key==='Enter')addStudentFromEval()">
+   <button id="micQuickStudent" type="button" class="mic" title="Ajouter un élève à la voix" onclick="startVoiceAddStudent()">🎙️</button>
+   <button type="button" class="primary small" onclick="addStudentFromEval()">+ Ajouter</button>
+  </div>
+  <div id="voiceQuickStatus" class="voice-status"></div>
+  <div class="between" style="margin-top:7px"><span id="progressText" class="sub">0/0 évalués</span><span id="studentStatus" class="badge">Non évalué</span></div>
+  <div class="progressbar"><div id="progressFill" class="progressfill"></div></div>
+ </div>
+ <div class="studentnav">
+  <button type="button" onclick="prevStudent()" aria-label="Élève précédent">‹</button>
+  <div style="text-align:center;font-size:13px;color:var(--muted)">Élève sélectionné</div>
+  <button type="button" onclick="nextStudent()" aria-label="Élève suivant">›</button>
+ </div>
+ <div id="criteria"></div>
+ <div class="card">
+  <div class="between"><b>Note finale</b><div><span id="total" class="score">0</span><span class="scoremax" id="totalMax"> / 10</span></div></div>
+  <div class="notice" id="saveStatus">Les notes sont enregistrées automatiquement.</div>
+ </div>
+</section>
+
+<section id="students" class="hidden">
+ <div class="card">
+  <b>Liste des élèves</b>
+  <p class="sub">La liste est commune à toutes les évaluations.</p>
+  <div class="row">
+   <input id="newStudent" placeholder="Nom Prénom" onkeydown="if(event.key==='Enter')addStudent()">
+   <button id="micStudent" class="mic" title="Saisir le nom à la voix" onclick="startVoice()">🎙️</button>
+   <button class="primary" onclick="addStudent()">Ajouter</button>
+  </div>
+  <div id="voiceStatus" class="voice-status"></div>
+ </div>
+ <div id="studentList"></div>
+</section>
+
+<section id="synth" class="hidden">
+ <div class="card">
+  <div class="between"><b>Synthèse</b><select id="synthEval" style="width:auto" onchange="renderSynth()"></select></div>
+  <div class="stats" style="margin-top:10px">
+   <div class="stat"><b id="avg">—</b><span>Moyenne</span></div>
+   <div class="stat"><b id="median">—</b><span>Médiane</span></div>
+   <div class="stat"><b id="done">0/0</b><span>Évalués</span></div>
+   <div class="stat"><b id="scale">/10</b><span>Barème</span></div>
+  </div>
+ </div>
+ <div class="card">
+  <div class="between"><b>Répartition des notes</b><span class="sub">par demi-point</span></div>
+  <div id="distribution" class="dist"></div>
+ </div>
+ <div class="card">
+  <b>Résultats</b>
+  <div style="overflow:auto;margin-top:8px"><table><thead id="resultHead"></thead><tbody id="results"></tbody></table></div>
+ </div>
+ <div class="card"><div class="card">
+   <b>Barèmes individuels</b>
+   <p class="sub">Une fiche individuelle par élève, prête à imprimer ou à enregistrer en PDF.</p>
+   <button class="primary" onclick="printIndividualScores()">🖨️ Imprimer les barèmes individuels</button>
+   <div id="individualStatus" class="voice-status"></div>
+  </div>
+  <button class="primary" onclick="exportCSV()">Exporter les notes (CSV)</button></div>
+</section>
+
+<section id="settings" class="hidden">
+ <div class="card">
+  <div class="between"><b>Paramètres de l'évaluation</b><button class="danger small" onclick="deleteEvaluation()">Supprimer</button></div>
+  <div class="row" style="margin-top:9px">
+   <button type="button" onclick="duplicateEvaluation()">Dupliquer cette évaluation</button>
+   <button type="button" onclick="resetEvaluationScores()">Réinitialiser ses notes</button>
+  </div>
+  <div style="margin-top:11px"><label>Nom de l'évaluation</label><input id="evalName" placeholder="Ex. Architecture hybride"></div>
+  <div style="margin-top:11px">
+   <label>Barème affiché</label>
+   <div class="grid2"><input id="displayMax" type="number" min="1" step=".5"><select id="gradeMode"><option value="raw">Conserver le barème</option><option value="10">Convertir sur 10</option><option value="20">Convertir sur 20</option></select></div>
+   <div class="sub">Le total réel est la somme des critères. La conversion est uniquement pour l'affichage et l'export.</div>
+  </div>
+  <button class="primary" style="margin-top:11px" onclick="saveSettings()">Enregistrer les paramètres</button>
+ </div>
+
+ <div class="card">
+  <div class="between"><b>Critères</b><button class="small" onclick="addCriterion()">+ Critère</button></div>
+  <p class="sub">Chaque critère peut avoir son propre nombre de points.</p>
+  <div id="criterionEditor"></div>
+ </div>
+
+ <div class="card">
+  <button class="primary" onclick="newEvaluation()">Créer une nouvelle évaluation</button>
+  <div class="sub" style="margin-top:7px">Une nouvelle évaluation utilise la même liste d'élèves mais possède ses propres notes et critères.</div>
+ </div>
+</section>
+</main>
+
+<footer><div class="footer-inner">
+ <button class="primary" onclick="showTab('eval')">Évaluer</button>
+ <button onclick="nextStudent()">Enregistrer & suivant</button>
+ <button onclick="showTab('synth')">Synthèse</button>
+</div></footer>
+
+<script>
+const KEY='arts_eval_param_v2';
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{
+ students:[],currentStudent:null,currentEval:null,
+ evaluations:[{id:'eval1',name:'Architecture hybride',displayMax:10,gradeMode:'raw',
+ criteria:[
+  {id:'c1',name:'Expérimenter, créer, produire',desc:"Composition : j’ai décalqué différentes architectures pour former une architecture hybride · Contrastes · Détails",max:6},
+  {id:'c2',name:'Mettre en œuvre un projet',desc:"J’ai utilisé les bons outils au bon moment · Achèvement et investissement",max:4}
+ ],scores:{}}]
+};
+function persist(){localStorage.setItem(KEY,JSON.stringify(data))}
+function migrateArchitectureCriteria(){
+ data.evaluations.forEach(e=>{
+  if(e.name==='Architecture hybride' && e.criteria.some(c=>c.name==='Composition')){
+   const oldScores=e.scores||{};
+   const scores={};
+   Object.keys(oldScores).forEach(stid=>{
+    const s=oldScores[stid]||{};
+    const c1=Number(s.c1||0)+Number(s.c2||0)+Number(s.c3||0);
+    const c2=Number(s.c4||0)+Number(s.c5||0);
+    scores[stid]={c1:Math.min(6,c1),c2:Math.min(4,c2)};
+   });
+   e.criteria=[
+    {id:'c1',name:'Expérimenter, créer, produire',desc:"Composition : j’ai décalqué différentes architectures pour former une architecture hybride · Contrastes · Détails",max:6},
+    {id:'c2',name:'Mettre en œuvre un projet',desc:"J’ai utilisé les bons outils au bon moment · Achèvement et investissement",max:4}
+   ];
+   e.scores=scores;
+  }
+ });
+}
+migrateArchitectureCriteria();
+function curEval(){return data.evaluations.find(e=>e.id===data.currentEval)||data.evaluations[0]}
+function fmt(n){return Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1})}
+function totalMax(e){return e.criteria.reduce((s,c)=>s+Number(c.max||0),0)}
+function scaleScore(raw,e){let mode=e.gradeMode;if(mode==='raw')return raw;return raw/totalMax(e)*Number(mode)}
+function displayMax(e){return e.gradeMode==='raw'?totalMax(e):Number(e.gradeMode)}
+function showTab(tab){
+ ['eval','students','synth','settings'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==tab));
+ ['Eval','Students','Synth','Settings'].forEach(x=>document.getElementById('tab'+x).classList.toggle('active',x.toLowerCase()===tab));
+ if(tab==='students')renderStudents();if(tab==='synth')renderSynth();if(tab==='settings')renderEditor();
+}
+function renderEvalSelect(){
+ let s=document.getElementById('evalSelect');s.innerHTML='';
+ data.evaluations.forEach(e=>{let o=document.createElement('option');o.value=e.id;o.textContent=e.name;s.appendChild(o)});
+ if(data.currentEval)s.value=data.currentEval;
+}
+function changeEvaluation(){data.currentEval=document.getElementById('evalSelect').value;persist();renderAll()}
+function renderStudentSelect(){
+ let s=document.getElementById('studentSelect');s.innerHTML='';
+ if(!data.students.length){let o=document.createElement('option');o.textContent='Aucun élève';s.appendChild(o);return}
+ data.students.forEach(st=>{let o=document.createElement('option');o.value=st.id;o.textContent=st.name;s.appendChild(o)});
+ if(!data.currentStudent)data.currentStudent=data.students[0].id;s.value=data.currentStudent;
+}
+function startVoiceEval(){
+ const btn=document.getElementById('micEval');
+ const status=document.getElementById('voiceEvalStatus');
+ const select=document.getElementById('studentSelect');
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){
+  status.textContent="La saisie vocale n’est pas disponible dans ce navigateur. Essaie Chrome ou Safari sur téléphone.";
+  return;
+ }
+ if(window.evalRecognition){try{window.evalRecognition.stop()}catch(e){}window.evalRecognition=null;return}
+ const recognition=new SR();
+ window.evalRecognition=recognition;
+ recognition.lang='fr-FR';recognition.interimResults=false;recognition.continuous=false;recognition.maxAlternatives=3;
+ btn.classList.add('listening');btn.textContent='⏹️';status.textContent="Écoute… dis le prénom et le nom de l’élève.";
+ recognition.onresult=(event)=>{
+  const alternatives=[];
+  for(let i=0;i<event.results[0].length;i++) alternatives.push(event.results[0][i].transcript.trim());
+  const normalize=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,' ').replace(/\s+/g,' ').trim();
+  let best=null,bestScore=0;
+  data.students.forEach(st=>{
+   const n=normalize(st.name);
+   alternatives.forEach(t=>{
+    const q=normalize(t);
+    let score=n===q?100:(n.includes(q)||q.includes(n)?70:0);
+    const words=q.split(' ');
+    if(words.length>1 && words.every(w=>n.includes(w)))score=Math.max(score,85);
+    if(score>bestScore){best=st;bestScore=score}
+   });
+  });
+  if(best){
+   data.currentStudent=best.id;persist();renderStudentSelect();document.getElementById('studentSelect').value=best.id;renderCriteria();
+   status.textContent='Élève sélectionné : '+best.name;
+  }else{
+   status.textContent='Élève non trouvé. Essaie de dire le prénom et le nom.';
+  }
+ };
+ recognition.onerror=(event)=>{
+  const messages={
+   'not-allowed':"⚠️ Le navigateur refuse la reconnaissance vocale. Si le micro est déjà autorisé, ouvre l’application depuis une page sécurisée (HTTPS) plutôt qu’un fichier local.",
+   'service-not-allowed':"⚠️ Le service de reconnaissance vocale n’est pas autorisé dans ce contexte. Essaie Chrome/Safari avec l’application ouverte depuis HTTPS.",
+   'audio-capture':"⚠️ Aucun microphone accessible. Vérifie le micro sélectionné et les autorisations du navigateur.",
+   'network':"⚠️ Le service de reconnaissance vocale n’est pas accessible. Vérifie la connexion internet.",
+   'no-speech':"Aucune parole détectée. Appuie sur 🎙️ et parle à nouveau."
+  };
+  status.textContent=messages[event.error]||"⚠️ La reconnaissance vocale a rencontré un problème ("+event.error+"). Réessaie.";
+ };
+ recognition.onend=()=>{
+  btn.classList.remove('listening');btn.textContent='🎙️';window.evalRecognition=null;
+ };
+ try{recognition.start()}catch(e){btn.classList.remove('listening');btn.textContent='🎙️';window.evalRecognition=null;status.textContent="Impossible d’activer le microphone."}
+}
+function changeStudent(){data.currentStudent=document.getElementById('studentSelect').value;persist();renderCriteria()}
+function scoreFor(stid,eid){let e=data.evaluations.find(x=>x.id===eid);return e?.scores?.[stid]||{}}
+function renderCriteria(){
+ let e=curEval(),box=document.getElementById('criteria');box.innerHTML='';
+ if(!data.currentStudent){box.innerHTML='<div class="card notice">Ajoutez des élèves dans l’onglet « Élèves ».</div>';updateTotal();return}
+ e.criteria.forEach((c,i)=>{
+  let v=Number(scoreFor(data.currentStudent,e.id)[c.id]||0);
+  let div=document.createElement('div');div.className='card criterion';
+  div.innerHTML='<div class="criterion-title">'+esc(c.name)+'</div>'+(c.desc?'<div class="criterion-desc">'+esc(c.desc)+'</div>':'')+
+   '<div class="scoreline"><span class="score" id="score_'+c.id+'">'+fmt(v)+'</span><span class="scoremax">/ '+fmt(c.max)+'</span></div>'+
+   '<input type="range" min="0" max="'+c.max+'" step=".5" value="'+v+'" oninput="setCriterion(\''+c.id+'\',this.value)">'+
+   '<div class="quick" id="quick_'+c.id+'"></div>';
+  box.appendChild(div);
+  const num=document.getElementById('num_'+c.id);
+  if(num)num.addEventListener('change',()=>setCriterionDirect(c.id,num.value));
+  renderQuick(c);
+ });
+ updateTotal();updateProgress();
+}
+function renderQuick(c){
+ let q=document.getElementById('quick_'+c.id);
+ for(let i=0;i<=Number(c.max)*2;i++){let v=i/2;if(v>c.max)continue;let b=document.createElement('button');b.textContent=fmt(v);b.onclick=()=>setCriterion(c.id,v);q.appendChild(b)}
+}
+function setCriterion(cid,v){
+ let e=curEval();if(!e.scores[data.currentStudent])e.scores[data.currentStudent]={};
+ let c=e.criteria.find(x=>x.id===cid), n=Math.max(0,Math.min(Number(c?.max||0),Number(v)||0));
+ e.scores[data.currentStudent][cid]=n;persist();
+ let range=document.getElementById('range_'+cid),num=document.getElementById('num_'+cid);
+ if(range)range.value=n;if(num)num.value=n;
+ updateTotal();updateProgress();
+}
+function setCriterionDirect(cid,v){setCriterion(cid,v)}
+function updateTotal(){
+ let e=curEval(),sc=scoreFor(data.currentStudent,e.id),raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0);
+ document.getElementById('total').textContent=fmt(scaleScore(raw,e));
+ document.getElementById('totalMax').textContent=' / '+fmt(displayMax(e));
+ document.getElementById('headerSub').textContent=e.name+' · barème '+fmt(totalMax(e));
+}
+let recognition=null;
+function startVoice(){
+ const input=document.getElementById('newStudent');
+ const btn=document.getElementById('micStudent');
+ const status=document.getElementById('voiceStatus');
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){
+   status.textContent="La saisie vocale n’est pas disponible dans ce navigateur. Essaie Chrome ou Safari sur téléphone.";
+   return;
+ }
+ if(recognition){ try{recognition.stop()}catch(e){} recognition=null; return; }
+ recognition=new SR();
+ recognition.lang='fr-FR';
+ recognition.interimResults=false;
+ recognition.continuous=false;
+ recognition.maxAlternatives=1;
+ btn.classList.add('listening');
+ btn.textContent='⏹️';
+ status.textContent="Écoute… dis le nom et le prénom.";
+ recognition.onresult=(event)=>{
+   const text=event.results[0][0].transcript.trim();
+   input.value=text;
+   status.textContent='Nom reconnu : '+text;
+ };
+ recognition.onerror=(event)=>{
+   const messages={
+    'not-allowed':"⚠️ Le navigateur refuse la reconnaissance vocale. Si le micro est déjà autorisé, ouvre l’application depuis une page sécurisée (HTTPS) plutôt qu’un fichier local.",
+    'service-not-allowed':"⚠️ Le service de reconnaissance vocale n’est pas autorisé dans ce contexte. Essaie Chrome/Safari avec l’application ouverte depuis HTTPS.",
+    'audio-capture':"⚠️ Aucun microphone accessible. Vérifie le micro sélectionné et les autorisations du navigateur.",
+    'network':"⚠️ Le service de reconnaissance vocale n’est pas accessible. Vérifie la connexion internet.",
+    'no-speech':"Aucune parole détectée. Appuie sur 🎙️ et parle à nouveau."
+   };
+   status.textContent=messages[event.error]||"⚠️ La reconnaissance vocale a rencontré un problème ("+event.error+"). Réessaie.";
+ };
+ recognition.onend=()=>{
+   btn.classList.remove('listening');
+   btn.textContent='🎙️';
+   recognition=null;
+ };
+ try{recognition.start()}catch(e){
+   btn.classList.remove('listening');btn.textContent='🎙️';recognition=null;
+   status.textContent="⚠️ Impossible de démarrer la reconnaissance vocale dans ce contexte. Si l’application est ouverte comme fichier local (file://), utilise une version hébergée en HTTPS.";
+ }
+}
+function startVoiceAddStudent(){
+ const input=document.getElementById('quickStudent');
+ const btn=document.getElementById('micQuickStudent');
+ const status=document.getElementById('voiceQuickStatus');
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){
+  status.textContent="La saisie vocale n’est pas disponible dans ce navigateur. Essaie Chrome ou Safari sur téléphone.";
+  return;
+ }
+ if(window.quickStudentRecognition){
+  try{window.quickStudentRecognition.stop()}catch(e){}
+  window.quickStudentRecognition=null;
+  return;
+ }
+ const recognition=new SR();
+ window.quickStudentRecognition=recognition;
+ recognition.lang='fr-FR';
+ recognition.interimResults=false;
+ recognition.continuous=false;
+ recognition.maxAlternatives=1;
+ btn.classList.add('listening');
+ btn.textContent='⏹️';
+ status.textContent="Écoute… dis le prénom et le nom de l’élève.";
+ recognition.onresult=(event)=>{
+  const text=event.results[0][0].transcript.trim();
+  input.value=text;
+  status.textContent='Nom reconnu : '+text;
+  addStudentFromEval();
+ };
+ recognition.onerror=(event)=>{
+  status.textContent=event.error==='not-allowed'
+   ?"Autorise l’accès au microphone dans le navigateur."
+   :"Impossible de reconnaître la voix. Tu peux réessayer.";
+ };
+ recognition.onend=()=>{
+  btn.classList.remove('listening');
+  btn.textContent='🎙️';
+  window.quickStudentRecognition=null;
+ };
+ try{recognition.start()}catch(e){
+  btn.classList.remove('listening');
+  btn.textContent='🎙️';
+  window.quickStudentRecognition=null;
+  status.textContent="⚠️ Impossible de démarrer la reconnaissance vocale dans ce contexte. Si l’application est ouverte comme fichier local (file://), utilise une version hébergée en HTTPS.";
+ }
+}
+function addStudentFromEval(){
+ const inp=document.getElementById('quickStudent'),name=inp.value.trim();
+ if(!name)return;
+ let existing=data.students.find(s=>s.name.toLowerCase()===name.toLowerCase());
+ if(existing){
+  data.currentStudent=existing.id;
+  inp.value='';
+  persist();renderAll();document.getElementById('studentSelect').value=existing.id;
+  renderCriteria();showTab('eval');
+  document.getElementById('voiceEvalStatus').textContent='Élève déjà présent : '+existing.name;
+  return;
+ }
+ let id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+ data.students.push({id,name});
+ data.currentStudent=id;
+ inp.value='';
+ persist();renderAll();document.getElementById('studentSelect').value=id;
+ renderCriteria();showTab('eval');
+ document.getElementById('voiceEvalStatus').textContent='Élève ajouté : '+name;
+}
+function addStudent(){
+ let inp=document.getElementById('newStudent'),name=inp.value.trim();if(!name)return;
+ let id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);data.students.push({id,name});data.currentStudent=id;inp.value='';persist();renderAll();showTab('eval')
+}
+function renderStudents(){
+ let box=document.getElementById('studentList');box.innerHTML='';
+ if(!data.students.length){box.innerHTML='<div class="card notice">Aucun élève pour le moment.</div>';return}
+ data.students.forEach(st=>{
+  let vals=data.evaluations.map(e=>{let sc=scoreFor(st.id,e.id),raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0);return {e,raw}}).filter(x=>x.raw>0);
+  let txt=vals.length?vals.map(x=>x.e.name+': '+fmt(scaleScore(x.raw,x.e))+'/'+fmt(displayMax(x.e))).join(' · '):'Pas encore évalué';
+  let d=document.createElement('div');d.className='card student';d.innerHTML='<div><div class="student-name">'+esc(st.name)+'</div><div class="sub">'+esc(txt)+'</div></div><div><button class="small" onclick="selectStudent(\''+st.id+'\')">Évaluer</button> <button class="small danger" onclick="removeStudent(\''+st.id+'\')">×</button></div>';box.appendChild(d)
+ })
+}
+function selectStudent(id){data.currentStudent=id;persist();renderAll();showTab('eval')}
+function removeStudent(id){if(!confirm('Supprimer cet élève et toutes ses notes ?'))return;data.students=data.students.filter(x=>x.id!==id);data.evaluations.forEach(e=>delete e.scores[id]);data.currentStudent=data.students[0]?.id||null;persist();renderAll();renderStudents()}
+function renderEditor(){
+ let e=curEval();document.getElementById('evalName').value=e.name;document.getElementById('displayMax').value=e.displayMax;document.getElementById('gradeMode').value=e.gradeMode;
+ let box=document.getElementById('criterionEditor');box.innerHTML='';
+ e.criteria.forEach((c,i)=>{
+  let d=document.createElement('div');d.className='criterion';
+  d.innerHTML='<div class="grid3"><div><label>Nom du critère</label><input id="cn_'+c.id+'" value="'+escAttr(c.name)+'"></div><div><label>Points</label><input id="cm_'+c.id+'" type="number" min=".5" step=".5" value="'+c.max+'"></div><button class="danger small" onclick="deleteCriterion(\''+c.id+'\')">Suppr.</button></div>'+
+  '<div style="margin-top:8px"><label>Description (facultative)</label><textarea id="cd_'+c.id+'">'+esc(c.desc||'')+'</textarea></div>';
+  box.appendChild(d)
+ })
+}
+function saveSettings(){
+ let e=curEval();e.name=document.getElementById('evalName').value.trim()||'Évaluation';e.displayMax=Number(document.getElementById('displayMax').value)||10;e.gradeMode=document.getElementById('gradeMode').value;
+ e.criteria.forEach(c=>{c.name=document.getElementById('cn_'+c.id).value.trim()||'Critère';c.max=Number(document.getElementById('cm_'+c.id).value)||1;c.desc=document.getElementById('cd_'+c.id).value.trim()});
+ persist();renderAll();showTab('eval')
+}
+function addCriterion(){let e=curEval();e.criteria.push({id:'c'+Date.now().toString(36),name:'Nouveau critère',desc:'',max:1});persist();renderEditor()}
+function deleteCriterion(id){let e=curEval();if(e.criteria.length<=1){alert('Une évaluation doit conserver au moins un critère.');return}e.criteria=e.criteria.filter(c=>c.id!==id);Object.values(e.scores).forEach(s=>delete s[id]);persist();renderEditor()}
+function newEvaluation(){
+ let name=prompt('Nom de la nouvelle évaluation :','Nouvelle évaluation');if(!name?.trim())return;
+ let id='e'+Date.now().toString(36);data.evaluations.push({id,name:name.trim(),displayMax:10,gradeMode:'10',criteria:[{id:'c'+Date.now().toString(36),name:'Critère 1',desc:'',max:1}],scores:{}});data.currentEval=id;persist();renderAll();showTab('settings')
+}
+function deleteEvaluation(){
+ if(data.evaluations.length<=1){alert('Il faut conserver au moins une évaluation.');return}
+ if(!confirm('Supprimer cette évaluation et toutes ses notes ?'))return;
+ let id=data.currentEval;data.evaluations=data.evaluations.filter(e=>e.id!==id);data.currentEval=data.evaluations[0].id;persist();renderAll();showTab('eval')
+}
+function renderSynth(){
+ let e=curEval(),sel=document.getElementById('synthEval');sel.innerHTML='';
+ data.evaluations.forEach(x=>{let o=document.createElement('option');o.value=x.id;o.textContent=x.name;sel.appendChild(o)});sel.value=e.id;
+ let rows=data.students.map(st=>{let sc=scoreFor(st.id,e.id),raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0),has=e.criteria.some(c=>sc[c.id]!==undefined);return {st,raw,has,score:scaleScore(raw,e)}});
+ let done=rows.filter(r=>r.has),nums=done.map(r=>r.score).sort((a,b)=>a-b);renderDistribution(e,rows);
+ let avg=nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:null,med=nums.length?(nums.length%2?nums[(nums.length-1)/2]:(nums[nums.length/2-1]+nums[nums.length/2])/2):null;
+ document.getElementById('avg').textContent=avg==null?'—':fmt(avg);document.getElementById('median').textContent=med==null?'—':fmt(med);document.getElementById('done').textContent=done.length+'/'+rows.length;document.getElementById('scale').textContent='/'+fmt(displayMax(e));
+ let head='<tr><th>Élève</th>';e.criteria.forEach(c=>head+='<th>'+esc(c.name)+'<br>/'+fmt(c.max)+'</th>');head+='<th>Note</th></tr>';document.getElementById('resultHead').innerHTML=head;
+ let body=document.getElementById('results');body.innerHTML='';
+ rows.sort((a,b)=>a.st.name.localeCompare(b.st.name,'fr')).forEach(r=>{let sc=scoreFor(r.st.id,e.id),tr='<tr><td>'+esc(r.st.name)+'</td>';e.criteria.forEach(c=>tr+='<td>'+fmt(sc[c.id]??0)+'</td>');tr+='<td><b>'+fmt(r.score)+'</b></td></tr>';body.insertAdjacentHTML('beforeend',tr)})
+}
+function exportCSV(){
+ let e=curEval(),rows=[['Élève',...e.criteria.map(c=>c.name+' /'+c.max),'Note /'+displayMax(e)]];
+ data.students.forEach(st=>{let sc=scoreFor(st.id,e.id),raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0);rows.push([st.name,...e.criteria.map(c=>sc[c.id]??0),scaleScore(raw,e)])});
+ let csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\n'),blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=e.name.replace(/[^a-z0-9à-ÿ]+/gi,'_')+'.csv';a.click()
+}
+function nextStudent(){
+ let i=data.students.findIndex(s=>s.id===data.currentStudent);
+ if(i<0){data.currentStudent=data.students[0]?.id||null}
+ else if(i<data.students.length-1)data.currentStudent=data.students[i+1].id;
+ else data.currentStudent=data.students[0]?.id||null;
+ persist();renderAll();showTab('eval')
+}
+function prevStudent(){
+ let i=data.students.findIndex(s=>s.id===data.currentStudent);
+ if(i<0){data.currentStudent=data.students[0]?.id||null}
+ else if(i>0)data.currentStudent=data.students[i-1].id;
+ else data.currentStudent=data.students[data.students.length-1]?.id||null;
+ persist();renderAll();showTab('eval')
+}
+function saveAndNext(){persist();nextStudent()}
+function isEvaluated(stid,e){
+ if(!stid)return false;
+ const sc=scoreFor(stid,e.id);
+ return e.criteria.some(c=>sc[c.id]!==undefined);
+}
+function updateProgress(){
+ const e=curEval(), total=data.students.length, done=data.students.filter(s=>isEvaluated(s.id,e)).length;
+ document.getElementById('progressText').textContent=done+'/'+total+' évalués';
+ document.getElementById('progressFill').style.width=(total?(done/total*100):0)+'%';
+ const badge=document.getElementById('studentStatus');
+ const doneHere=isEvaluated(data.currentStudent,e);
+ badge.textContent=doneHere?'Évalué':'Non évalué';badge.className='badge'+(doneHere?' done':'');
+}
+function duplicateEvaluation(){
+ const e=curEval(), id='e'+Date.now().toString(36);
+ const copy=JSON.parse(JSON.stringify(e));copy.id=id;copy.name=e.name+' (copie)';copy.scores={};
+ data.evaluations.push(copy);data.currentEval=id;persist();renderAll();showTab('settings');
+}
+function resetEvaluationScores(){
+ const e=curEval();
+ if(!confirm('Réinitialiser toutes les notes de cette évaluation ? La liste des élèves et les critères seront conservés.'))return;
+ e.scores={};persist();renderAll();showTab('eval')
+}
+function renderDistribution(e,rows){
+ const max=Math.ceil(displayMax(e)*2)/2, bins=[];
+ for(let v=0;v<=max+.001;v+=.5)bins.push({v,n:0});
+ rows.filter(r=>r.has).forEach(r=>{
+  let idx=Math.round(r.score*2);
+  if(idx>=0&&idx<bins.length)bins[idx].n++;
+ });
+ const peak=Math.max(1,...bins.map(b=>b.n)),box=document.getElementById('distribution');box.innerHTML='';
+ bins.forEach(b=>{
+  const w=document.createElement('div');w.className='barwrap';
+  w.innerHTML='<div class="barcount">'+(b.n||'')+'</div><div class="bar" style="height:'+Math.max(2,b.n/peak*82)+'px"></div><div class="barlabel">'+fmt(b.v)+'</div>';
+  box.appendChild(w);
+ });
+}
+
+function printIndividualScores(){
+  const e=curEval();
+  const rows=data.students.map(st=>{
+    const sc=scoreFor(st.id,e.id);
+    const raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0);
+    return {st,sc,has:isEvaluated(st.id,e),score:scaleScore(raw,e)};
+  }).filter(r=>r.has);
+
+  const status=document.getElementById('individualStatus');
+  if(!rows.length){
+    status.textContent="Aucun élève n’est encore évalué pour cette évaluation.";
+    return;
+  }
+
+  let area=document.getElementById('individualPrintArea');
+  if(!area){
+    area=document.createElement('div');
+    area.id='individualPrintArea';
+    document.body.appendChild(area);
+  }
+
+  area.innerHTML=rows.map(r=>{
+    const criteria=e.criteria.map(c=>`<tr>
+      <td><b>${esc(c.name)}</b>${c.desc?`<br><span style="font-size:11px;color:#6b7280">${esc(c.desc)}</span>`:''}</td>
+      <td>${fmt(r.sc[c.id]??0)} / ${fmt(c.max)}</td>
+    </tr>`).join('');
+    return `<section class="individual-sheet">
+      <div class="individual-title">${esc(r.st.name)}</div>
+      <div class="individual-subtitle">${esc(e.name)}</div>
+      <div class="individual-note">
+        <span class="individual-note-label">Note finale</span>
+        <span class="individual-note-value">${fmt(r.score)} / ${fmt(displayMax(e))}</span>
+      </div>
+      <table class="individual-table">
+        <thead><tr><th>Critères d’évaluation</th><th>Résultat</th></tr></thead>
+        <tbody>${criteria}</tbody>
+      </table>
+      <div class="individual-appreciation">
+        <b>Appréciation</b>
+        <div style="margin-top:12px;color:#9ca3af">................................................................................................</div>
+        <div style="margin-top:18px;color:#9ca3af">................................................................................................</div>
+        <div style="margin-top:18px;color:#9ca3af">................................................................................................</div>
+      </div>
+      <div class="individual-footer">Carnet d’évaluation — Arts plastiques</div>
+    </section>`;
+  }).join('');
+
+  document.body.classList.add('printing-individuals');
+  window.print();
+  setTimeout(()=>document.body.classList.remove('printing-individuals'),700);
+  status.textContent=rows.length+" fiche(s) envoyée(s) à l’impression.";
+}
+
+function renderAll(){renderEvalSelect();renderStudentSelect();renderCriteria();renderStudents();renderSynth();renderEditor()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escAttr(s){return esc(s)}
+if(!data.currentEval)data.currentEval=data.evaluations[0].id;persist();renderAll();
+</script>
+</body>
+</html>
