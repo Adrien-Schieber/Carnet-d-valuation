@@ -52,26 +52,33 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 @media print{
   body.printing-individuals > *{display:none!important}
   body.printing-individuals #individualPrintArea{display:block!important}
+  .individual-print-page{
+    width:100%;height:277mm;box-sizing:border-box;display:grid;grid-template-rows:1fr 1fr;gap:4mm;
+    page-break-after:always;
+  }
+  .individual-print-page:last-child{page-break-after:auto}
   .individual-sheet{
-    width:100%;min-height:260mm;padding:16mm 14mm;page-break-after:always;
-    background:#fff;color:#111827;
+    width:100%;min-height:0;padding:7mm 10mm;box-sizing:border-box;
+    background:#fff;color:#111827;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;
   }
-  .individual-sheet:last-child{page-break-after:auto}
-  .individual-title{font-size:24px;font-weight:800;margin-bottom:4px}
-  .individual-subtitle{font-size:14px;color:#6b7280;margin-bottom:18px}
+  .individual-title{font-size:18px;font-weight:800;margin-bottom:2px}
+  .individual-subtitle{font-size:11px;color:#6b7280;margin-bottom:7px}
   .individual-note{
-    border:2px solid #111827;border-radius:14px;padding:14px;margin:16px 0;
-    display:flex;justify-content:space-between;align-items:center;gap:15px;
+    border:1.5px solid #111827;border-radius:10px;padding:7px;margin:7px 0;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
   }
-  .individual-note-label{font-weight:750}
-  .individual-note-value{font-size:34px;font-weight:850}
-  .individual-table{width:100%;border-collapse:collapse;margin-top:14px}
-  .individual-table th,.individual-table td{border:1px solid #d1d5db;padding:10px;vertical-align:top}
-  .individual-table th{background:#f3f4f6;font-size:12px}
-  .individual-table td:last-child,.individual-table th:last-child{text-align:center;white-space:nowrap}
+  .individual-note-label{font-weight:750;font-size:11px}
+  .individual-note-value{font-size:22px;font-weight:850}
+  .individual-table{width:100%;border-collapse:collapse;margin-top:7px}
+  .individual-table th,.individual-table td{border:1px solid #d1d5db;padding:5px 7px;vertical-align:top}
+  .individual-table th{background:#f3f4f6;font-size:10px}
+  .individual-table td{font-size:10px}
+  .individual-table td:last-child,.individual-table th:last-child{text-align:center;white-space:nowrap;width:18%}
   .individual-table tr.criterion-print-incomplete td{background:#e5e7eb}
-  .individual-appreciation{margin-top:22px;border:1px solid #d1d5db;border-radius:12px;padding:12px;min-height:42mm}
-  .individual-footer{margin-top:18px;font-size:11px;color:#6b7280}
+  .individual-subcriterion.subcriterion-print-incomplete{background:#d1d5db !important;color:#374151 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .individual-subcriterion.subcriterion-print-success{background:#f0fdf4 !important;color:#166534 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .individual-appreciation{margin-top:7px;border:1px solid #d1d5db;border-radius:9px;padding:7px;min-height:18mm;font-size:10px}
+  .individual-footer{margin-top:6px;font-size:8px;color:#6b7280}
 }
 /* Affichage dynamique de la note pendant le déplacement du curseur */
 .criterion .score{transition:transform .08s ease}
@@ -901,13 +908,15 @@ function printIndividualScores(){
     document.body.appendChild(area);
   }
 
-  area.innerHTML=rows.map(r=>{
+  const sheets=rows.map(r=>{
     const criteria=e.criteria.map(c=>{
       const subs=(c.subcriteria||[]).map(sc=>{
         const state=getSubcriterionState(e,r.st.id,c.id,sc.id);
-        return `<div class="individual-subcriterion ${state==='incomplete'?'subcriterion-print-incomplete':''} ${state==='success'?'subcriterion-print-success':''}">${state==='success'?'👍 ':''}${esc(sc.name)}</div>`;
+        const printClass=state==='incomplete'?'subcriterion-print-incomplete':state==='success'?'subcriterion-print-success':'';
+        return `<div class="individual-subcriterion ${printClass}">${state==='success'?'👍 ':''}${esc(sc.name)}</div>`;
       }).join('');
-      return `<tr><td><b>${esc(c.name)}</b>${subs}</td><td>${fmt(r.sc[c.id]??0)} / ${fmt(c.max)}</td></tr>`;    }).join('');
+      return `<tr><td><b>${esc(c.name)}</b>${subs}</td><td>${fmt(r.sc[c.id]??0)} / ${fmt(c.max)}</td></tr>`;
+    }).join('');
     return `<section class="individual-sheet">
       <div class="individual-title">${esc(r.st.name)}</div>
       <div class="individual-subtitle">${esc(e.name)}</div>
@@ -920,14 +929,18 @@ function printIndividualScores(){
         <tbody>${criteria}</tbody>
       </table>
       <div class="individual-appreciation">
-        <b>Appréciation</b>
-        <div style="margin-top:12px;color:#9ca3af">................................................................................................</div>
-        <div style="margin-top:18px;color:#9ca3af">................................................................................................</div>
-        <div style="margin-top:18px;color:#9ca3af">................................................................................................</div>
+        <b>Remarque</b>
+        <div style="margin-top:6px;white-space:pre-wrap;line-height:1.35;min-height:12mm">${esc((data.remarks&&data.remarks[r.st.id])||'')}</div>
       </div>
       <div class="individual-footer">Carnet d’évaluation — Arts plastiques</div>
     </section>`;
-  }).join('');
+  });
+
+  const pages=[];
+  for(let i=0;i<sheets.length;i+=2){
+    pages.push(`<div class="individual-print-page">${sheets.slice(i,i+2).join('')}</div>`);
+  }
+  area.innerHTML=pages.join('');
 
   document.body.classList.add('printing-individuals');
   window.print();
