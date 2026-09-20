@@ -69,25 +69,136 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
   .individual-table th,.individual-table td{border:1px solid #d1d5db;padding:10px;vertical-align:top}
   .individual-table th{background:#f3f4f6;font-size:12px}
   .individual-table td:last-child,.individual-table th:last-child{text-align:center;white-space:nowrap}
+  .individual-table tr.criterion-print-incomplete td{background:#e5e7eb}
   .individual-appreciation{margin-top:22px;border:1px solid #d1d5db;border-radius:12px;padding:12px;min-height:42mm}
   .individual-footer{margin-top:18px;font-size:11px;color:#6b7280}
 }
+/* Affichage dynamique de la note pendant le déplacement du curseur */
+.criterion .score{transition:transform .08s ease}
+.criterion .score.live{transform:scale(1.08)}
+
+/* Note du critère compacte, près du barème */
+.criterion .scoreline{justify-content:flex-end;gap:0;margin-top:4px}
+.criterion .score-compact{display:flex;align-items:baseline;gap:1px}
+.criterion .score-compact .score{font-size:18px;font-weight:750;min-width:auto}
+.criterion .score-compact .scoremax{font-size:13px}
+
+.criterion-head{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+.criterion-head .criterion-hint{font-size:10px;color:#9ca3af;font-weight:650}
+.criterion.incomplete{background:#fff}
+.subcriteria{display:flex;flex-direction:column;gap:6px;margin:10px 0 5px}
+.subcriterion{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:8px 9px;border:1px solid var(--line);background:#f9fafb;font-weight:600;border-radius:9px}
+.subcriterion-name{flex:1;cursor:pointer;padding:3px 0}
+.subcriterion .thumb{min-width:36px;width:36px;height:32px;padding:0;border-radius:8px;font-size:17px;background:#e5e7eb}
+.subcriterion.success{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.subcriterion.incomplete{background:#e5e7eb;border-color:#d1d5db;color:#374151}
+.subcriterion.success .thumb{background:#dcfce7}
+.individual-subcriterion{margin-top:4px;padding:4px 6px;border-radius:6px;font-size:12px;font-weight:600}.subcriterion-print-incomplete{background:#e5e7eb;color:#374151}.subcriterion-print-success{background:#f0fdf4;color:#166534}
+
+.saved-eval-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.saved-eval-row:first-child{border-top:0}
+.saved-eval-row .row{flex-wrap:nowrap}
+
+
+/* V3 — identité visuelle « Carnet d'atelier » */
+:root{
+ --bg:#f5efe5;--card:#fffdf8;--text:#183047;--muted:#6d7780;--line:#e7ded1;
+ --accent:#c9573d;--accent-dark:#a94330;--accent-soft:#f7ddd5;--blue:#496878;
+ --success:#4b9a5b;--success-soft:#e8f4e8;--warm:#ead5b0;
+}
+html{background:var(--bg)}
+body{
+ background:
+  radial-gradient(circle at 8% 8%,rgba(201,87,61,.10),transparent 150px),
+  radial-gradient(circle at 92% 12%,rgba(73,104,120,.10),transparent 170px),
+  linear-gradient(180deg,#f8f3eb 0%,#f2eadf 100%);
+ color:var(--text);
+}
+body:before,body:after{content:"";position:fixed;pointer-events:none;z-index:0;opacity:.12;filter:blur(.2px)}
+body:before{width:115px;height:48px;left:-25px;top:115px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform:rotate(-16deg);border-radius:50%}
+body:after{width:130px;height:52px;right:-30px;top:300px;background:linear-gradient(90deg,transparent,var(--blue),transparent);transform:rotate(18deg);border-radius:50%}
+header{background:rgba(255,253,248,.90);border-bottom:1px solid var(--line);box-shadow:0 5px 20px rgba(72,55,40,.07)}
+.header-row{max-width:780px;margin:auto}
+h1{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:22px;letter-spacing:-.3px;color:#243b4c}
+.sub{color:var(--muted)}
+main{position:relative;z-index:1}
+nav{scrollbar-width:none;padding:3px 0 10px}
+nav::-webkit-scrollbar{display:none}
+nav button{background:rgba(255,253,248,.82);border:1px solid var(--line);color:#4e5e68;border-radius:999px;padding:9px 13px;box-shadow:0 2px 5px rgba(72,55,40,.04);white-space:nowrap}
+nav button.active{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 4px 12px rgba(201,87,61,.24)}
+button{background:#eee8df;color:var(--text);border:1px solid transparent;border-radius:12px;transition:transform .12s ease,box-shadow .12s ease,background .12s ease}
+button:hover{transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.primary,.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.primary:hover{background:var(--accent-dark)}
+button.danger{background:#fae5df;color:#a43d2b}
+.mic{background:#eef2f2;border-color:#dbe3e2}
+.mic.listening{background:var(--accent);border-color:var(--accent)}
+.card{
+ background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0;
+ box-shadow:0 5px 16px rgba(72,55,40,.055)
+}
+input,select,textarea{border-color:#ddd4c8;background:#fffefa;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(201,87,61,.12);border-color:#d98a78}
+.notice{background:#faf5ed;border-color:#e1d5c6;color:#657078}
+.criterion{position:relative;overflow:hidden;border-color:#e6ddd0;background:#fffefa;padding:14px 14px 12px;box-shadow:0 4px 12px rgba(72,55,40,.045)}
+.criterion:before{content:"";position:absolute;left:0;top:15px;bottom:15px;width:4px;border-radius:0 5px 5px 0;background:var(--accent)}
+.criterion-title{font-size:15px;color:#1b3548}
+.criterion-head .criterion-hint{color:#a0a5a7}
+.criterion.incomplete{background:#f1eee9}
+.criterion.incomplete:before{background:#9ca3a3}
+input[type=range]{accent-color:var(--accent)}
+input[type=range]::-webkit-slider-runnable-track{background:#d9d5cf}
+input[type=range]::-webkit-slider-thumb{background:var(--accent);box-shadow:0 2px 7px rgba(201,87,61,.28)}
+input[type=range]::-moz-range-track{background:#d9d5cf}
+input[type=range]::-moz-range-thumb{background:var(--accent)}
+.criterion .score-compact .score{color:var(--accent);font-size:18px}
+.subcriteria{gap:6px}
+.subcriterion{background:#faf8f3;border-color:#e5ddd2;border-radius:11px;padding:8px 9px;color:#284052;transition:background .15s ease,transform .12s ease}
+.subcriterion:hover{transform:translateX(1px)}
+.subcriterion.success{background:var(--success-soft);border-color:#c9e5cc;color:#2f7140}
+.subcriterion.incomplete{background:#dfe1e0;border-color:#cfd2d1;color:#465257}
+.subcriterion .thumb{background:#ece9e3;color:#29404f;border:0}
+.subcriterion.success .thumb{background:#d8eedb;color:#347b43}
+.subcriterion.incomplete .thumb{background:#e9e9e6}
+.progressbar{background:#e1ddd6}.progressfill{background:var(--accent)}
+.badge{background:#eeeae3;color:#67727a}.badge.done{background:var(--success-soft);color:#347b43}
+.stat{background:#fffefa;border-color:var(--line)}
+.bar{background:#b8a89a}
+.eval-card:hover{background:#fffefa}
+.saved-eval-row{padding:11px 0}
+.saved-eval-row .sub{font-size:11px}
+.evalactions button{box-shadow:0 2px 8px rgba(72,55,40,.05)}
+footer{background:rgba(255,253,248,.94);border-top:1px solid var(--line);box-shadow:0 -5px 20px rgba(72,55,40,.07)}
+.footer-inner button{background:transparent;border:1px solid transparent;color:#5c6870}
+.footer-inner button.primary{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(201,87,61,.22)}
+/* petite touche carnet */
+label{color:#314756}
+.score{color:#263f50}
+@media(max-width:620px){
+ main{padding-left:10px;padding-right:10px}
+ .card{border-radius:17px}
+ h1{font-size:20px}
+ nav button{font-size:12px;padding:8px 11px}
+ .criterion{padding-left:15px}
+}
+
 </style>
 </head>
 <body>
 <header>
 <div class="header-row">
- <div><h1>Carnet d'évaluation</h1><div class="sub" id="headerSub">Arts plastiques</div></div>
+ <div><h1>Carnet d’atelier</h1><div class="sub" id="headerSub">Arts plastiques</div></div>
  <button class="small" onclick="showTab('settings')">Paramétrer</button>
 </div>
 </header>
 
 <main>
 <nav>
- <button id="tabEval" class="active" onclick="showTab('eval')">Évaluer</button>
- <button id="tabStudents" onclick="showTab('students')">Élèves</button>
- <button id="tabSynth" onclick="showTab('synth')">Synthèse</button>
- <button id="tabSettings" onclick="showTab('settings')">Évaluation</button>
+ <button id="tabEval" class="active" onclick="showTab('eval')">✏️ Évaluer</button>
+ <button id="tabStudents" onclick="showTab('students')">👥 Élèves</button>
+ <button id="tabSynth" onclick="showTab('synth')">📊 Synthèse</button>
+ <button id="tabSettings" onclick="showTab('settings')">⚙️ Évaluations</button>
 </nav>
 
 <section id="eval">
@@ -117,6 +228,15 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
   <button type="button" onclick="nextStudent()" aria-label="Élève suivant">›</button>
  </div>
  <div id="criteria"></div>
+<div class="card">
+   <label>Remarque</label>
+   <div class="row">
+    <textarea id="studentRemark" placeholder="Ajouter une remarque pour cet élève…"></textarea>
+    <button id="micRemark" type="button" class="mic" title="Saisir la remarque à la voix" onclick="startVoiceRemark()">🎙️</button>
+   </div>
+   <div id="voiceRemarkStatus" class="voice-status"></div>
+  </div>
+  
  <div class="card">
   <div class="between"><b>Note finale</b><div><span id="total" class="score">0</span><span class="scoremax" id="totalMax"> / 10</span></div></div>
   <div class="notice" id="saveStatus">Les notes sont enregistrées automatiquement.</div>
@@ -124,6 +244,19 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 </section>
 
 <section id="students" class="hidden">
+ <div class="card">
+  <b>Classe</b>
+  <p class="sub">Indique le niveau et le numéro de la classe pour enregistrer cette liste et la réutiliser plus tard.</p>
+  <div class="grid2">
+   <div><label>Niveau</label><input id="classLevel" placeholder="Ex. 4e"></div>
+   <div><label>Classe</label><input id="classNumber" placeholder="Ex. 2"></div>
+  </div>
+  <div class="row" style="margin-top:9px">
+   <button class="primary" onclick="saveClassList()">Enregistrer cette classe</button>
+   <button onclick="loadClassList()">Charger une classe</button>
+  </div>
+  <div id="classStatus" class="voice-status"></div>
+ </div>
  <div class="card">
   <b>Liste des élèves</b>
   <p class="sub">La liste est commune à toutes les évaluations.</p>
@@ -135,6 +268,10 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
   <div id="voiceStatus" class="voice-status"></div>
  </div>
  <div id="studentList"></div>
+ <div class="card">
+  <b>Mes classes enregistrées</b>
+  <div id="savedClassList" style="margin-top:8px"></div>
+ </div>
 </section>
 
 <section id="synth" class="hidden">
@@ -181,6 +318,12 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
  </div>
 
  <div class="card">
+  <div class="between"><b>Mes évaluations enregistrées</b><button class="small" onclick="saveCurrentAsTemplate()">＋ Enregistrer cette évaluation</button></div>
+  <p class="sub">Enregistre uniquement le nom, le barème, les critères et les sous-critères. Les notes et les élèves ne sont pas copiés.</p>
+  <div id="savedEvaluationsList"></div>
+ </div>
+
+ <div class="card">
   <div class="between"><b>Critères</b><button class="small" onclick="addCriterion()">+ Critère</button></div>
   <p class="sub">Chaque critère peut avoir son propre nombre de points.</p>
   <div id="criterionEditor"></div>
@@ -202,34 +345,38 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <script>
 const KEY='arts_eval_param_v2';
 let data=JSON.parse(localStorage.getItem(KEY)||'null')||{
- students:[],currentStudent:null,currentEval:null,
+ students:[],savedClasses:[],savedEvaluations:[],remarks:{},currentStudent:null,currentEval:null,
  evaluations:[{id:'eval1',name:'Architecture hybride',displayMax:10,gradeMode:'raw',
  criteria:[
-  {id:'c1',name:'Expérimenter, créer, produire',desc:"Composition : j’ai décalqué différentes architectures pour former une architecture hybride · Contrastes · Détails",max:6},
-  {id:'c2',name:'Mettre en œuvre un projet',desc:"J’ai utilisé les bons outils au bon moment · Achèvement et investissement",max:4}
+  {id:'c1',name:'Expérimenter, créer, produire',desc:"",max:6,subcriteria:[
+   {id:'sc1',name:'Composition'},{id:'sc2',name:'Contrastes'},{id:'sc3',name:'Détails'}
+  ]},
+  {id:'c2',name:'Mettre en œuvre un projet',desc:"",max:4,subcriteria:[
+   {id:'sc4',name:'J’ai utilisé les bons outils au bon moment'},{id:'sc5',name:'Achèvement et investissement'}
+  ]}
  ],scores:{}}]
 };
 function persist(){localStorage.setItem(KEY,JSON.stringify(data))}
+if(!Array.isArray(data.savedClasses))data.savedClasses=[];
+if(!Array.isArray(data.savedEvaluations))data.savedEvaluations=[];
+if(!data.remarks)data.remarks={};
 function migrateArchitectureCriteria(){
+ const defaults={
+  'Expérimenter, créer, produire':[{id:'sc1',name:'Composition'},{id:'sc2',name:'Contrastes'},{id:'sc3',name:'Détails'}],
+  'Mettre en œuvre un projet':[{id:'sc4',name:'J’ai utilisé les bons outils au bon moment'},{id:'sc5',name:'Achèvement et investissement'}]
+ };
  data.evaluations.forEach(e=>{
-  if(e.name==='Architecture hybride' && e.criteria.some(c=>c.name==='Composition')){
-   const oldScores=e.scores||{};
-   const scores={};
-   Object.keys(oldScores).forEach(stid=>{
-    const s=oldScores[stid]||{};
-    const c1=Number(s.c1||0)+Number(s.c2||0)+Number(s.c3||0);
-    const c2=Number(s.c4||0)+Number(s.c5||0);
-    scores[stid]={c1:Math.min(6,c1),c2:Math.min(4,c2)};
-   });
-   e.criteria=[
-    {id:'c1',name:'Expérimenter, créer, produire',desc:"Composition : j’ai décalqué différentes architectures pour former une architecture hybride · Contrastes · Détails",max:6},
-    {id:'c2',name:'Mettre en œuvre un projet',desc:"J’ai utilisé les bons outils au bon moment · Achèvement et investissement",max:4}
-   ];
-   e.scores=scores;
-  }
+  if(!Array.isArray(e.criteria))e.criteria=[];
+  e.criteria.forEach(c=>{
+   if(!Array.isArray(c.subcriteria))c.subcriteria=[];
+   if(e.name==='Architecture hybride' && c.subcriteria.length===0 && defaults[c.name]) c.subcriteria=JSON.parse(JSON.stringify(defaults[c.name]));
+  });
+  if(!e.subcriteriaStates)e.subcriteriaStates={};
+  if(!e.criterionStates)e.criterionStates={};
  });
 }
 migrateArchitectureCriteria();
+persist();
 function curEval(){return data.evaluations.find(e=>e.id===data.currentEval)||data.evaluations[0]}
 function fmt(n){return Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1})}
 function totalMax(e){return e.criteria.reduce((s,c)=>s+Number(c.max||0),0)}
@@ -303,25 +450,49 @@ function startVoiceEval(){
  };
  try{recognition.start()}catch(e){btn.classList.remove('listening');btn.textContent='🎙️';window.evalRecognition=null;status.textContent="Impossible d’activer le microphone."}
 }
-function changeStudent(){data.currentStudent=document.getElementById('studentSelect').value;persist();renderCriteria()}
+function changeStudent(){data.currentStudent=document.getElementById('studentSelect').value;persist();renderCriteria();renderRemark()}
+function renderRemark(){
+ const input=document.getElementById('studentRemark');
+ if(input)input.value=(data.remarks&&data.remarks[data.currentStudent])||'';
+}
+function saveRemark(){
+ const input=document.getElementById('studentRemark');
+ if(!input||!data.currentStudent)return;
+ if(!data.remarks)data.remarks={};
+ data.remarks[data.currentStudent]=input.value.trim();
+ persist();
+}
+
 function scoreFor(stid,eid){let e=data.evaluations.find(x=>x.id===eid);return e?.scores?.[stid]||{}}
 function renderCriteria(){
  let e=curEval(),box=document.getElementById('criteria');box.innerHTML='';
  if(!data.currentStudent){box.innerHTML='<div class="card notice">Ajoutez des élèves dans l’onglet « Élèves ».</div>';updateTotal();return}
- e.criteria.forEach((c,i)=>{
+ e.criteria.forEach(c=>{
   let v=Number(scoreFor(data.currentStudent,e.id)[c.id]||0);
-  let div=document.createElement('div');div.className='card criterion';
-  div.innerHTML='<div class="criterion-title">'+esc(c.name)+'</div>'+(c.desc?'<div class="criterion-desc">'+esc(c.desc)+'</div>':'')+
-   '<div class="scoreline"><span class="score" id="score_'+c.id+'">'+fmt(v)+'</span><span class="scoremax">/ '+fmt(c.max)+'</span></div>'+
-   '<input type="range" min="0" max="'+c.max+'" step=".5" value="'+v+'" oninput="setCriterion(\''+c.id+'\',this.value)">'+
-   '<div class="quick" id="quick_'+c.id+'"></div>';
-  box.appendChild(div);
-  const num=document.getElementById('num_'+c.id);
-  if(num)num.addEventListener('change',()=>setCriterionDirect(c.id,num.value));
-  renderQuick(c);
+  let div=document.createElement('div');div.className='card criterion';div.id='criterion_'+c.id;
+  div.innerHTML='<div class="criterion-head" onclick="toggleCriterionIncomplete(event,\''+c.id+'\')"><div class="criterion-title">'+esc(c.name)+'</div><span class="criterion-hint">Cliquer = gris</span></div>'+renderSubcriteriaHTML(c)+'<div class="scoreline"><span></span><span class="score-compact"><span class="score" id="score_'+c.id+'">'+fmt(v)+'</span><span class="scoremax"> / '+fmt(c.max)+'</span></span></div><input type="range" min="0" max="'+c.max+'" step=".5" value="'+v+'" oninput="setCriterion(\''+c.id+'\',this.value)"><div class="quick" id="quick_'+c.id+'"></div>';
+  box.appendChild(div);renderQuick(c);
  });
- updateTotal();updateProgress();
+ updateTotal();updateProgress();renderRemark();renderSubcriterionStates();renderCriterionStates();
 }
+function renderSubcriteriaHTML(c){
+ if(!c.subcriteria||!c.subcriteria.length)return '';
+ return '<div class="subcriteria">'+c.subcriteria.map(sc=>'<div class="subcriterion" id="sub_'+c.id+'_'+sc.id+'"><span class="subcriterion-name" onclick="toggleSubcriterionIncomplete(event,\''+c.id+'\',\''+sc.id+'\')">'+esc(sc.name)+'</span><button type="button" class="thumb" aria-label="Valider" onclick="toggleSubcriterionSuccess(event,\''+c.id+'\',\''+sc.id+'\')">👍</button></div>').join('')+'</div>';
+}
+function getSubcriterionState(e,stid,cid,sid){return e.subcriteriaStates?.[stid]?.[cid]?.[sid]||'';}
+function setSubcriterionState(cid,sid,state){
+ const e=curEval(),stid=data.currentStudent;if(!stid)return;
+ if(!e.subcriteriaStates)e.subcriteriaStates={};if(!e.subcriteriaStates[stid])e.subcriteriaStates[stid]={};if(!e.subcriteriaStates[stid][cid])e.subcriteriaStates[stid][cid]={};
+ if(e.subcriteriaStates[stid][cid][sid]===state)delete e.subcriteriaStates[stid][cid][sid];else e.subcriteriaStates[stid][cid][sid]=state;
+ persist();renderSubcriterionStates();
+}
+function toggleSubcriterionIncomplete(event,cid,sid){event.stopPropagation();setSubcriterionState(cid,sid,'incomplete');}
+function toggleSubcriterionSuccess(event,cid,sid){event.stopPropagation();setSubcriterionState(cid,sid,'success');}
+function renderSubcriterionStates(){
+ const e=curEval(),stid=data.currentStudent;e.criteria.forEach(c=>(c.subcriteria||[]).forEach(sc=>{const el=document.getElementById('sub_'+c.id+'_'+sc.id);if(el){const state=getSubcriterionState(e,stid,c.id,sc.id);el.className='subcriterion '+(state==='success'?'success':state==='incomplete'?'incomplete':'');}}));
+}
+function renderCriterionStates(){}
+
 function renderQuick(c){
  let q=document.getElementById('quick_'+c.id);
  for(let i=0;i<=Number(c.max)*2;i++){let v=i/2;if(v>c.max)continue;let b=document.createElement('button');b.textContent=fmt(v);b.onclick=()=>setCriterion(c.id,v);q.appendChild(b)}
@@ -332,6 +503,8 @@ function setCriterion(cid,v){
  e.scores[data.currentStudent][cid]=n;persist();
  let range=document.getElementById('range_'+cid),num=document.getElementById('num_'+cid);
  if(range)range.value=n;if(num)num.value=n;
+ const scoreEl=document.getElementById('score_'+cid);
+ if(scoreEl){scoreEl.textContent=fmt(n);scoreEl.classList.add('live');clearTimeout(scoreEl._liveTimer);scoreEl._liveTimer=setTimeout(()=>scoreEl.classList.remove('live'),120);}
  updateTotal();updateProgress();
 }
 function setCriterionDirect(cid,v){setCriterion(cid,v)}
@@ -342,6 +515,20 @@ function updateTotal(){
  document.getElementById('headerSub').textContent=e.name+' · barème '+fmt(totalMax(e));
 }
 let recognition=null;
+function startVoiceRemark(){
+ const input=document.getElementById('studentRemark'),btn=document.getElementById('micRemark'),status=document.getElementById('voiceRemarkStatus');
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){status.textContent="La saisie vocale n’est pas disponible dans ce navigateur.";return}
+ if(window.remarkRecognition){try{window.remarkRecognition.stop()}catch(e){}window.remarkRecognition=null;return}
+ const recognition=new SR();window.remarkRecognition=recognition;
+ recognition.lang='fr-FR';recognition.interimResults=false;recognition.continuous=false;recognition.maxAlternatives=1;
+ btn.classList.add('listening');btn.textContent='⏹️';status.textContent="Écoute… dicte ta remarque.";
+ recognition.onresult=(event)=>{input.value=event.results[0][0].transcript.trim();saveRemark();status.textContent='Remarque enregistrée.'};
+ recognition.onerror=(event)=>{status.textContent=event.error==='not-allowed'?"⚠️ Le navigateur refuse la reconnaissance vocale.":"⚠️ Impossible de reconnaître la voix. Réessaie."};
+ recognition.onend=()=>{btn.classList.remove('listening');btn.textContent='🎙️';window.remarkRecognition=null};
+ try{recognition.start()}catch(e){btn.classList.remove('listening');btn.textContent='🎙️';window.remarkRecognition=null;status.textContent="Impossible de démarrer la reconnaissance vocale."}
+}
+
 function startVoice(){
  const input=document.getElementById('newStudent');
  const btn=document.getElementById('micStudent');
@@ -431,6 +618,7 @@ function startVoiceAddStudent(){
   status.textContent="⚠️ Impossible de démarrer la reconnaissance vocale dans ce contexte. Si l’application est ouverte comme fichier local (file://), utilise une version hébergée en HTTPS.";
  }
 }
+document.addEventListener('blur',function(event){if(event.target&&event.target.id==='studentRemark')saveRemark()},true);
 function addStudentFromEval(){
  const inp=document.getElementById('quickStudent'),name=inp.value.trim();
  if(!name)return;
@@ -457,12 +645,81 @@ function addStudent(){
 }
 function renderStudents(){
  let box=document.getElementById('studentList');box.innerHTML='';
- if(!data.students.length){box.innerHTML='<div class="card notice">Aucun élève pour le moment.</div>';return}
- data.students.forEach(st=>{
-  let vals=data.evaluations.map(e=>{let sc=scoreFor(st.id,e.id),raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0);return {e,raw}}).filter(x=>x.raw>0);
-  let txt=vals.length?vals.map(x=>x.e.name+': '+fmt(scaleScore(x.raw,x.e))+'/'+fmt(displayMax(x.e))).join(' · '):'Pas encore évalué';
-  let d=document.createElement('div');d.className='card student';d.innerHTML='<div><div class="student-name">'+esc(st.name)+'</div><div class="sub">'+esc(txt)+'</div></div><div><button class="small" onclick="selectStudent(\''+st.id+'\')">Évaluer</button> <button class="small danger" onclick="removeStudent(\''+st.id+'\')">×</button></div>';box.appendChild(d)
- })
+ if(!data.students.length){
+  box.innerHTML='<div class="card notice">Aucun élève pour le moment.</div>';
+ }else{
+  data.students.forEach(st=>{
+   let vals=data.evaluations.map(e=>{let sc=scoreFor(st.id,e.id),raw=e.criteria.reduce((s,c)=>s+Number(sc[c.id]||0),0);return {e,raw}}).filter(x=>x.raw>0);
+   let txt=vals.length?vals.map(x=>x.e.name+': '+fmt(scaleScore(x.raw,x.e))+'/'+fmt(displayMax(x.e))).join(' · '):'Pas encore évalué';
+   let d=document.createElement('div');d.className='card student';d.innerHTML='<div><div class="student-name">'+esc(st.name)+'</div><div class="sub">'+esc(txt)+'</div></div><div><button class="small" onclick="selectStudent(\''+st.id+'\')">Évaluer</button> <button class="small danger" onclick="removeStudent(\''+st.id+'\')">×</button></div>';box.appendChild(d)
+  });
+ }
+ renderSavedClasses();
+}
+
+function renderSavedClasses(){
+ const box=document.getElementById('savedClassList');
+ if(!box)return;
+ box.innerHTML='';
+ if(!data.savedClasses.length){
+  box.innerHTML='<div class="notice">Aucune classe enregistrée pour le moment.</div>';
+  return;
+ }
+ data.savedClasses.forEach(cl=>{
+  const d=document.createElement('div');
+  d.className='card';
+  d.innerHTML='<div class="between"><div><b>'+esc(cl.name)+'</b><div class="sub">'+cl.students.length+' élève(s)</div></div><div class="row"><button class="small" onclick="useSavedClass(\''+cl.id+'\')">Utiliser</button><button class="small danger" onclick="deleteSavedClass(\''+cl.id+'\')">×</button></div></div>';
+  box.appendChild(d);
+ });
+}
+
+function saveClassList(){
+ const level=document.getElementById('classLevel').value.trim();
+ const number=document.getElementById('classNumber').value.trim();
+ const status=document.getElementById('classStatus');
+ if(!level||!number){status.textContent='Indique le niveau et le numéro de la classe.';return}
+ if(!data.students.length){status.textContent='Ajoute d’abord les élèves de cette classe.';return}
+ const name=level+' '+number;
+ const students=data.students.map(st=>({id:st.id,name:st.name}));
+ const existing=data.savedClasses.find(c=>c.name.toLowerCase()===name.toLowerCase());
+ if(existing) existing.students=students;
+ else data.savedClasses.push({id:'cl'+Date.now().toString(36),name,students});
+ persist();
+ renderSavedClasses();
+ status.textContent='Classe « '+name+' » enregistrée avec '+students.length+' élève(s).';
+}
+
+function loadClassList(){
+ if(!data.savedClasses.length){document.getElementById('classStatus').textContent='Aucune classe enregistrée.';return}
+ const choices=data.savedClasses.map((c,i)=>(i+1)+'. '+c.name+' ('+c.students.length+' élèves)').join('\n');
+ const answer=prompt('Quelle classe veux-tu charger ?\n\n'+choices+'\n\nIndique son numéro :');
+ if(answer===null)return;
+ const index=Number(answer)-1;
+ if(!Number.isInteger(index)||!data.savedClasses[index]){document.getElementById('classStatus').textContent='Numéro de classe invalide.';return}
+ useSavedClass(data.savedClasses[index].id);
+}
+
+function useSavedClass(id){
+ const cl=data.savedClasses.find(c=>c.id===id);
+ if(!cl)return;
+ data.students=cl.students.map(st=>({id:st.id,name:st.name}));
+ data.currentStudent=data.students[0]?.id||null;
+ const parts=cl.name.trim().split(/\s+/);
+ document.getElementById('classLevel').value=parts[0]||'';
+ document.getElementById('classNumber').value=parts.slice(1).join(' ')||'';
+ persist();
+ renderAll();
+ document.getElementById('classStatus').textContent='Classe « '+cl.name+' » chargée.';
+}
+
+function deleteSavedClass(id){
+ const cl=data.savedClasses.find(c=>c.id===id);
+ if(!cl)return;
+ if(!confirm('Supprimer la classe enregistrée « '+cl.name+' » ?'))return;
+ data.savedClasses=data.savedClasses.filter(c=>c.id!==id);
+ persist();
+ renderSavedClasses();
+ document.getElementById('classStatus').textContent='Classe supprimée des classes enregistrées.';
 }
 function selectStudent(id){data.currentStudent=id;persist();renderAll();showTab('eval')}
 function removeStudent(id){if(!confirm('Supprimer cet élève et toutes ses notes ?'))return;data.students=data.students.filter(x=>x.id!==id);data.evaluations.forEach(e=>delete e.scores[id]);data.currentStudent=data.students[0]?.id||null;persist();renderAll();renderStudents()}
@@ -472,20 +729,82 @@ function renderEditor(){
  e.criteria.forEach((c,i)=>{
   let d=document.createElement('div');d.className='criterion';
   d.innerHTML='<div class="grid3"><div><label>Nom du critère</label><input id="cn_'+c.id+'" value="'+escAttr(c.name)+'"></div><div><label>Points</label><input id="cm_'+c.id+'" type="number" min=".5" step=".5" value="'+c.max+'"></div><button class="danger small" onclick="deleteCriterion(\''+c.id+'\')">Suppr.</button></div>'+
-  '<div style="margin-top:8px"><label>Description (facultative)</label><textarea id="cd_'+c.id+'">'+esc(c.desc||'')+'</textarea></div>';
-  box.appendChild(d)
+  '<div style="margin-top:9px"><label>Sous-critères</label><div id="subEditor_'+c.id+'"></div><button type="button" class="small" style="margin-top:6px" onclick="addSubcriterion(\''+c.id+'\')">+ Sous-critère</button></div>';
+  box.appendChild(d);
+  renderSubcriterionEditor(c)
  })
+  renderSavedEvaluations();
 }
+function renderSubcriterionEditor(c){
+ const box=document.getElementById('subEditor_'+c.id);if(!box)return;box.innerHTML='';
+ (c.subcriteria||[]).forEach(sc=>{
+  const row=document.createElement('div');row.className='row';row.style.marginTop='5px';
+  row.innerHTML='<input id="sn_'+c.id+'_'+sc.id+'" value="'+escAttr(sc.name)+'" placeholder="Nom du sous-critère"><button type="button" class="danger small" onclick="deleteSubcriterion(\''+c.id+'\',\''+sc.id+'\')">×</button>';
+  box.appendChild(row);
+ });
+}
+function addSubcriterion(cid){
+ const c=curEval().criteria.find(x=>x.id===cid);if(!c)return;
+ if(!c.subcriteria)c.subcriteria=[];
+ c.subcriteria.push({id:'sc'+Date.now().toString(36),name:'Nouveau sous-critère'});
+ persist();renderEditor();
+}
+function deleteSubcriterion(cid,sid){
+ const e=curEval(),c=e.criteria.find(x=>x.id===cid);if(!c)return;
+ c.subcriteria=(c.subcriteria||[]).filter(sc=>sc.id!==sid);
+ if(e.subcriteriaStates)Object.values(e.subcriteriaStates).forEach(x=>{if(x[cid])delete x[cid][sid]});
+ persist();renderEditor();
+}
+
 function saveSettings(){
  let e=curEval();e.name=document.getElementById('evalName').value.trim()||'Évaluation';e.displayMax=Number(document.getElementById('displayMax').value)||10;e.gradeMode=document.getElementById('gradeMode').value;
- e.criteria.forEach(c=>{c.name=document.getElementById('cn_'+c.id).value.trim()||'Critère';c.max=Number(document.getElementById('cm_'+c.id).value)||1;c.desc=document.getElementById('cd_'+c.id).value.trim()});
+ e.criteria.forEach(c=>{
+  c.name=document.getElementById('cn_'+c.id).value.trim()||'Critère';
+  c.max=Number(document.getElementById('cm_'+c.id).value)||1;
+  (c.subcriteria||[]).forEach(sc=>{const input=document.getElementById('sn_'+c.id+'_'+sc.id);if(input)sc.name=input.value.trim()||'Sous-critère';});
+ });
  persist();renderAll();showTab('eval')
 }
-function addCriterion(){let e=curEval();e.criteria.push({id:'c'+Date.now().toString(36),name:'Nouveau critère',desc:'',max:1});persist();renderEditor()}
-function deleteCriterion(id){let e=curEval();if(e.criteria.length<=1){alert('Une évaluation doit conserver au moins un critère.');return}e.criteria=e.criteria.filter(c=>c.id!==id);Object.values(e.scores).forEach(s=>delete s[id]);persist();renderEditor()}
+function addCriterion(){let e=curEval();e.criteria.push({id:'c'+Date.now().toString(36),name:'Nouveau critère',desc:'',max:1,subcriteria:[]});persist();renderEditor()}
+function deleteCriterion(id){let e=curEval();if(e.criteria.length<=1){alert('Une évaluation doit conserver au moins un critère.');return}e.criteria=e.criteria.filter(c=>c.id!==id);Object.values(e.scores).forEach(s=>delete s[id]);if(e.criterionStates)Object.values(e.criterionStates).forEach(x=>delete x[id]);if(e.subcriteriaStates)Object.values(e.subcriteriaStates).forEach(x=>delete x[id]);persist();renderEditor()}
+function evaluationTemplateFrom(e){
+ const copy=JSON.parse(JSON.stringify(e));
+ delete copy.scores; delete copy.subcriteriaStates; delete copy.criterionStates;
+ return {id:'tpl'+Date.now().toString(36),name:copy.name,displayMax:copy.displayMax,gradeMode:copy.gradeMode,criteria:copy.criteria};
+}
+function saveCurrentAsTemplate(){
+ const e=curEval();
+ const existing=data.savedEvaluations.find(x=>x.name.toLowerCase()===e.name.toLowerCase());
+ const tpl=evaluationTemplateFrom(e);
+ if(existing){
+  if(!confirm('Une évaluation enregistrée porte déjà ce nom. La remplacer ?'))return;
+  tpl.id=existing.id;
+  data.savedEvaluations=data.savedEvaluations.map(x=>x.id===existing.id?tpl:x);
+ }else data.savedEvaluations.push(tpl);
+ persist();renderEditor();
+}
+function useSavedEvaluation(id){
+ const tpl=data.savedEvaluations.find(x=>x.id===id);if(!tpl)return;
+ const idNew='e'+Date.now().toString(36);
+ const copy=JSON.parse(JSON.stringify(tpl));
+ copy.id=idNew;copy.scores={};copy.subcriteriaStates={};copy.criterionStates={};
+ data.evaluations.push(copy);data.currentEval=idNew;
+ persist();renderAll();showTab('eval');
+}
+function deleteSavedEvaluation(id){
+ if(!confirm('Supprimer cette évaluation enregistrée ?'))return;
+ data.savedEvaluations=data.savedEvaluations.filter(x=>x.id!==id);
+ persist();renderEditor();
+}
+function renderSavedEvaluations(){
+ const box=document.getElementById('savedEvaluationsList');if(!box)return;
+ if(!data.savedEvaluations.length){box.innerHTML='<div class="sub" style="margin-top:8px">Aucune évaluation enregistrée pour le moment.</div>';return;}
+ box.innerHTML=data.savedEvaluations.map(t=>`<div class="saved-eval-row"><div><b>${esc(t.name)}</b><div class="sub">${t.criteria.length} critère(s) · ${fmt(t.criteria.reduce((a,c)=>a+Number(c.max||0),0))} points</div></div><div class="row"><button class="small" onclick="useSavedEvaluation('${t.id}')">Utiliser</button><button class="danger small" onclick="deleteSavedEvaluation('${t.id}')">Supprimer</button></div></div>`).join('');
+}
+
 function newEvaluation(){
  let name=prompt('Nom de la nouvelle évaluation :','Nouvelle évaluation');if(!name?.trim())return;
- let id='e'+Date.now().toString(36);data.evaluations.push({id,name:name.trim(),displayMax:10,gradeMode:'10',criteria:[{id:'c'+Date.now().toString(36),name:'Critère 1',desc:'',max:1}],scores:{}});data.currentEval=id;persist();renderAll();showTab('settings')
+ let id='e'+Date.now().toString(36);data.evaluations.push({id,name:name.trim(),displayMax:10,gradeMode:'10',criteria:[{id:'c'+Date.now().toString(36),name:'Critère 1',desc:'',max:1,subcriteria:[]}],scores:{},subcriteriaStates:{},criterionStates:{}});data.currentEval=id;persist();renderAll();showTab('settings')
 }
 function deleteEvaluation(){
  if(data.evaluations.length<=1){alert('Il faut conserver au moins une évaluation.');return}
@@ -583,10 +902,12 @@ function printIndividualScores(){
   }
 
   area.innerHTML=rows.map(r=>{
-    const criteria=e.criteria.map(c=>`<tr>
-      <td><b>${esc(c.name)}</b>${c.desc?`<br><span style="font-size:11px;color:#6b7280">${esc(c.desc)}</span>`:''}</td>
-      <td>${fmt(r.sc[c.id]??0)} / ${fmt(c.max)}</td>
-    </tr>`).join('');
+    const criteria=e.criteria.map(c=>{
+      const subs=(c.subcriteria||[]).map(sc=>{
+        const state=getSubcriterionState(e,r.st.id,c.id,sc.id);
+        return `<div class="individual-subcriterion ${state==='incomplete'?'subcriterion-print-incomplete':''} ${state==='success'?'subcriterion-print-success':''}">${state==='success'?'👍 ':''}${esc(sc.name)}</div>`;
+      }).join('');
+      return `<tr><td><b>${esc(c.name)}</b>${subs}</td><td>${fmt(r.sc[c.id]??0)} / ${fmt(c.max)}</td></tr>`;    }).join('');
     return `<section class="individual-sheet">
       <div class="individual-title">${esc(r.st.name)}</div>
       <div class="individual-subtitle">${esc(e.name)}</div>
@@ -614,7 +935,7 @@ function printIndividualScores(){
   status.textContent=rows.length+" fiche(s) envoyée(s) à l’impression.";
 }
 
-function renderAll(){renderEvalSelect();renderStudentSelect();renderCriteria();renderStudents();renderSynth();renderEditor()}
+function renderAll(){renderEvalSelect();renderStudentSelect();renderCriteria();renderStudents();renderSynth();renderEditor();renderSavedEvaluations()}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function escAttr(s){return esc(s)}
 if(!data.currentEval)data.currentEval=data.evaluations[0].id;persist();renderAll();
